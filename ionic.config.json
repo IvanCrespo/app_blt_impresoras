@@ -1,0 +1,7 @@
+{
+  "name": "prueba_impresora",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
