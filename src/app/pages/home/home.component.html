@@ -1,0 +1,109 @@
+<ion-header class="ion-no-border">
+    <ion-toolbar color="primary">
+        <ion-title mode="ios">
+            <ion-label>
+                <ion-text color="tertiary">Bluetooth Thermal Printer App</ion-text>
+                <p><ion-text color="white">By Ivan Crespo</ion-text></p>
+            </ion-label>
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content color="primary">
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <ion-row class="print-content">
+        <div class="print-select">
+            <ion-label>Impresora conectada:</ion-label>
+            <p>{{device == "" ? 'Sin impresora': device}}</p>
+            <ion-label class="subtitle">Address:</ion-label>
+            <p>{{address  == "" ? 'Sin address': address}}</p>
+        </div>
+    </ion-row>
+    <ion-list class="prints" *ngIf="loaded && !error">
+        <ion-list-header>
+            <ion-label color="medium">Impresoras Sincronizadas</ion-label>
+        </ion-list-header>
+        <ion-item-group>
+            <ion-item lines="full" *ngFor="let list of lists">
+                <ion-thumbnail slot="start" class="ion-text-center">
+                    <img [src]="'assets/imgs/down-left-arrow.png'" />
+                </ion-thumbnail>
+                <ion-label>
+                    <ion-text>{{list.name}}</ion-text>
+                    <p>
+                        <ion-text>
+                            {{list.address}}
+                        </ion-text>
+                    </p>
+                </ion-label>
+                <ion-button [ngClass]="active.id == list.id ? 'btn-activate' : 'btn-select'" (click)="selectDevice(list, lists)">
+                    <ion-icon slot="icon-only" name="power"></ion-icon>
+                </ion-button>
+            </ion-item>
+        </ion-item-group>
+        <ion-list-header>
+            <ion-label color="medium">Nuevas Impresoras</ion-label>
+        </ion-list-header>
+        <ion-item-group>
+            <ion-item lines="full" *ngFor="let unpaired of unpaireds">
+                <ion-thumbnail slot="start" class="ion-text-center">
+                    <img [src]="'assets/imgs/down-left-arrow.png'" />
+                </ion-thumbnail>
+                <ion-label>
+                    <ion-text>{{unpaired.name}}</ion-text>
+                    <p>
+                        <ion-text>
+                            {{unpaired.address}}
+                        </ion-text>
+                    </p>
+                </ion-label>
+                <ion-button [ngClass]="active.id == unpaired.id ? 'btn-activate' : 'btn-select'" (click)="selectDevice(unpaired, unpaireds)">
+                    <ion-icon slot="icon-only" name="power"></ion-icon>
+                </ion-button>
+            </ion-item>
+        </ion-item-group>
+    </ion-list>
+
+
+    <ion-list class="prints" *ngIf="!loaded">
+        <ion-list-header>
+            <ion-skeleton-text [animated]="true" style="width: 80px"></ion-skeleton-text>
+        </ion-list-header>
+        <ion-item-group>
+            <ion-item lines="full" *ngFor="let item of [1, 2]">
+                <ion-thumbnail slot="start" class="ion-text-center">
+                    <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                    <ion-skeleton-text [animated]="true" style="width: 80%;"></ion-skeleton-text>
+                    <p>
+                        <ion-text>
+                            <ion-skeleton-text [animated]="true" style="width: 60%;"></ion-skeleton-text>
+                        </ion-text>
+                    </p>
+                </ion-label>
+                <ion-skeleton-text [animated]="true" style="width: 40px; height: 40px;"></ion-skeleton-text>
+            </ion-item>
+        </ion-item-group>
+        <ion-list-header>
+            <ion-skeleton-text [animated]="true" style="width: 80px"></ion-skeleton-text>
+        </ion-list-header>
+        <ion-item-group>
+            <ion-item lines="full" *ngFor="let item of [1, 2]">
+                <ion-thumbnail slot="start" class="ion-text-center">
+                    <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                </ion-thumbnail>
+                <ion-label>
+                    <ion-skeleton-text [animated]="true" style="width: 80%;"></ion-skeleton-text>
+                    <p>
+                        <ion-text>
+                            <ion-skeleton-text [animated]="true" style="width: 60%;"></ion-skeleton-text>
+                        </ion-text>
+                    </p>
+                </ion-label>
+                <ion-skeleton-text [animated]="true" style="width: 40px; height: 40px;"></ion-skeleton-text>
+            </ion-item>
+        </ion-item-group>
+    </ion-list>
+</ion-content>

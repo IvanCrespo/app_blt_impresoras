@@ -1,20 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Impresoras
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ion-item>
+    <ion-label>Impresoras disponibles</ion-label>
+    <ion-select [(ngModel)]="printSeleccionada">
+      <ion-select-option *ngFor="let impresora of impresoras; let i = index" [value]=impresora.address>
+        {{ impresora.name }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-button fill="solid" (click)="selectDevice()">Seleccionar Impresora</ion-button>
+  <br>
+  <ion-button fill="solid" (click)="imprimirTicket()">Imprimir</ion-button>
 </ion-content>
