@@ -1,0 +1,60 @@
+ion-header {
+    ion-toolbar {
+        padding: 20px 0px;
+
+        ion-title {
+            padding-inline: 0px;
+
+            ion-label {
+                ion-text {
+                    font-size: 1.3rem;
+                }
+
+                p {
+                    padding-top: 6px;
+
+                    ion-text {
+                        font-size: 1rem !important;
+                    }
+                }
+            }
+        }
+    }
+}
+
+ion-content {
+
+    .paperTicket,
+    .tickets {
+        margin: 30px;
+    }
+
+    .paperTicket ion-list {
+        background: transparent;
+
+        .data-item {
+            --border-radius: 15px;
+        }
+    }
+
+    .label-item {
+        --background: transparent;
+        --padding-start: 10px;
+
+        ion-label {
+            font-size: 14px;
+            font-weight: 700;
+        }
+    }
+
+    .tickets .options-ticket {
+        padding-top: 15px;
+
+        .btn-ticket {
+            --background: var(--ion-color-tertiary-shade);
+            --border-radius: 12px;
+            height: 48px;
+            margin: 12px 0px;
+        }
+    }
+}

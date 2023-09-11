@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+
+// Components
+import { PrintTicketsComponent } from 'src/app/components/modals/print-tickets/print-tickets.component';
 
 // Services 
 import { BluetoothService } from 'src/app/services/status/bluetooth/bluetooth.service';
@@ -21,6 +25,7 @@ export class HomeComponent implements OnInit {
   unpaireds: Array<any> = [];
   loaded: boolean = false;
   error: boolean = false;
+  verificado: boolean = true;
   active: any = {};
   device: string = "";
   address: string = "";
@@ -29,6 +34,7 @@ export class HomeComponent implements OnInit {
     private bltService: BluetoothService,
     private serviceExport: serviceExport,
     private platform: Platform,
+    private mdlCtrl: ModalController
   ) { }
 
   ngOnInit() {
@@ -121,12 +127,14 @@ export class HomeComponent implements OnInit {
             console.log('Activo', this.active);
             /* this.active = (Object.keys(found).length > 0) ? true : false; */
             await loading.dismiss();
+            this.verificado = false;
             this.serviceExport.toastMsg('Dispositivo sincronizado!', 'success', 2500);
           }, async fail => {
             this.device = "";
             this.address = "";
             this.active = {};
             await loading.dismiss();
+            this.verificado = true;
             this.serviceExport.toastMsg('Se ha perdido la conexión!', 'warning', 2500);
           });
         }
@@ -142,12 +150,27 @@ export class HomeComponent implements OnInit {
         this.device = device.name;
         this.address = device.address;
         this.active = device;
+        this.verificado = false;
         this.serviceExport.toastMsg('Dispositivo conectado!', 'success', 2500);
       }
     }, async (notConnected) => {
       console.log('No hay conectado', notConnected);
       this.active = {};
+      this.verificado = true;
       this.serviceExport.toastMsg('No se cuenta con dispositivo conectado!', 'warning', 2500);
     });
+  }
+
+  async openMdlTickets() {
+    const modal = await this.mdlCtrl.create({
+      component: PrintTicketsComponent,
+      componentProps: {
+        'device': this.active
+      }
+    });
+    modal.onDidDismiss().then((modelData) => {
+      console.log(modelData);
+    });
+    return await modal.present();
   }
 }

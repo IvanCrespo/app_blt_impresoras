@@ -97,4 +97,22 @@ export class BluetoothService {
       result(true);
     });
   }
+
+  // Imprimir Tickets
+  writeTicket(resultByte: any) {
+    return new Promise((resolve, reject) => {
+      this.bluetoothSerial.write(resultByte).then(res => {
+        console.log('Write Ticekt', res);
+        resolve('BLUETOOTH: Su ticket se imprimio correctamente!.');
+      }, error => {
+        console.log('Fallo la impresion', error);
+        reject('BLUETOOTH: Fallo la impresion, verifiquelo con su administrador.');
+      })
+    });
+  }
+
+  // Limpiar Buffer
+  clearBuffer(){
+    this.bluetoothSerial.clear();
+  }
 }

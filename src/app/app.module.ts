@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 // Modules
 import { PagesPageModule } from './pages/pages.module';
+import { ComponentsModule } from './components/components.module';
 
 // Plugins
 import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
@@ -22,6 +23,7 @@ import { Permissions } from './shared/permissions/permissions';
     IonicModule.forRoot(),
     AppRoutingModule,
     PagesPageModule,
+    ComponentsModule,
   ],
   providers: [
     {

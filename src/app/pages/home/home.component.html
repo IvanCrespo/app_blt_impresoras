@@ -13,11 +13,16 @@
         <ion-refresher-content></ion-refresher-content>
     </ion-refresher>
     <ion-row class="print-content">
+        <div class="btn-print">
+            <ion-button *ngIf="active.id" class="printEnabled" (click)="openMdlTickets()" [disabled]="verificado">
+                <img src="../../../assets/imgs/printTicket.png" alt="printTicket" />
+            </ion-button>
+        </div>
         <div class="print-select">
             <ion-label>Impresora conectada:</ion-label>
             <p>{{device == "" ? 'Sin impresora': device}}</p>
             <ion-label class="subtitle">Address:</ion-label>
-            <p>{{address  == "" ? 'Sin address': address}}</p>
+            <p>{{address == "" ? 'Sin address': address}}</p>
         </div>
     </ion-row>
     <ion-list class="prints" *ngIf="loaded && !error">
@@ -37,7 +42,8 @@
                         </ion-text>
                     </p>
                 </ion-label>
-                <ion-button [ngClass]="active.id == list.id ? 'btn-activate' : 'btn-select'" (click)="selectDevice(list, lists)">
+                <ion-button [ngClass]="active.id == list.id ? 'btn-activate' : 'btn-select'"
+                    (click)="selectDevice(list, lists)">
                     <ion-icon slot="icon-only" name="power"></ion-icon>
                 </ion-button>
             </ion-item>
@@ -58,7 +64,8 @@
                         </ion-text>
                     </p>
                 </ion-label>
-                <ion-button [ngClass]="active.id == unpaired.id ? 'btn-activate' : 'btn-select'" (click)="selectDevice(unpaired, unpaireds)">
+                <ion-button [ngClass]="active.id == unpaired.id ? 'btn-activate' : 'btn-select'"
+                    (click)="selectDevice(unpaired, unpaireds)">
                     <ion-icon slot="icon-only" name="power"></ion-icon>
                 </ion-button>
             </ion-item>

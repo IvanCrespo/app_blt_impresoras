@@ -1,0 +1,38 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
+    <ion-title mode="ios">
+      <ion-label>
+        <ion-text color="tertiary">Tickets para Imprimir</ion-text>
+        <p><ion-text color="white">{{device.name}}</ion-text></p>
+      </ion-label>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content color="secondary">
+  <div class="paperTicket" *ngIf="activate">
+    <ion-list lines="none">
+      <ion-item class="label-item">
+        <ion-label>Tamaño de Papel</ion-label>
+      </ion-item>
+      <ion-item class="data-item">
+        <ion-select placeholder="Seleccione tamaño" [(ngModel)]="tamanio_papel" cancelText="Cancelar" okText="Aceptar">
+          <ion-select-option value="2">2 Pulgadas</ion-select-option>
+          <ion-select-option value="3">3 Pulgadas</ion-select-option>
+        </ion-select>
+        <ion-icon name="newspaper-outline" color="primary" slot="start"></ion-icon>
+      </ion-item>
+    </ion-list>
+  </div>
+  <!-- Tickets -->
+  <div class="tickets">
+    <ion-item class="label-item">
+      <ion-label>Opciones de Tickets</ion-label>
+    </ion-item>
+    <div class="options-ticket">
+      <ion-button class="btn-ticket" expand="block" (click)="printLogo()">Solo Logo</ion-button>
+      <ion-button class="btn-ticket" expand="block" (click)="printQR()">Solo QR</ion-button>
+      <ion-button class="btn-ticket" expand="block" (click)="ticketEjemplo()">Ticket de Ejemplo</ion-button>
+      <ion-button class="btn-ticket" expand="block" (click)="convertImage()">Convertir Imagen</ion-button>
+    </div>
+  </div>
+</ion-content>
