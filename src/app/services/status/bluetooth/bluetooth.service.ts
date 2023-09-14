@@ -3,6 +3,9 @@ import { Subscription } from 'rxjs';
 
 // Plugins
 import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
+import { PhotoLibrary } from '@awesome-cordova-plugins/photo-library/ngx';
+import { CommandsArray, StarPRNT } from '@awesome-cordova-plugins/star-prnt/ngx';
+
 // Encoder para logo tickets
 import EscPosEncoder from 'esc-pos-encoder-ionic';
 
@@ -13,8 +16,14 @@ export class BluetoothService {
 
   private connection!: Subscription;
 
+  // StarPRNT
+  imagenes: any = [];
+  logo_uri: string = '';
+
   constructor(
-    private bluetoothSerial: BluetoothSerial
+    private bluetoothSerial: BluetoothSerial,
+    private photoLibrary: PhotoLibrary,
+    private starprnt: StarPRNT,
   ) { }
 
   // Buscar dispositivos Bluetooth
@@ -47,7 +56,6 @@ export class BluetoothService {
         });
         return Promise.allSettled([list, unpaired])
           .then((devices: Array<Object>) => {
-            console.log('PromiseAll Devices', devices);
             resolve(devices);
           })
           .catch((error) => {
@@ -63,11 +71,11 @@ export class BluetoothService {
 
   // Verificar si tenemos un dispositivo bluetooth conectado
   checkConnectedDevice() {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       this.bluetoothSerial.isConnected().then(isConnected => {
-        console.log('Dispositivo conectado?:', isConnected);
         resolve(isConnected);
       }, notConnected => {
+        console.log('Error Bluetooth Connect:', notConnected);
         reject('BLUETOOTH: No se encontro algún dispositivo conectado.');
       });
     });
@@ -100,19 +108,95 @@ export class BluetoothService {
 
   // Imprimir Tickets
   writeTicket(resultByte: any) {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       this.bluetoothSerial.write(resultByte).then(res => {
-        console.log('Write Ticekt', res);
         resolve('BLUETOOTH: Su ticket se imprimio correctamente!.');
       }, error => {
-        console.log('Fallo la impresion', error);
+        console.log('Error Bluetooth Printer', error);
         reject('BLUETOOTH: Fallo la impresion, verifiquelo con su administrador.');
       })
     });
   }
 
   // Limpiar Buffer
-  clearBuffer(){
+  clearBuffer() {
     this.bluetoothSerial.clear();
   }
+
+  /* ----------------------- Para StarPRNT ---------------------------- */
+  async getLogoLibrary() {
+    return await new Promise<boolean>((resolve, reject) => {
+      this.photoLibrary.getLibrary().subscribe((result: any) => {
+        let self = this;
+        var library = result.library;
+        library.forEach(function (libraryItem: any) {
+          const result = libraryItem.fileName.substring(0, 4);
+          let buscar = 'logo';
+          if (buscar == result) {
+            let datos: any = {};
+            datos.nombre = libraryItem.fileName;
+            datos.id = libraryItem.id;
+            self.imagenes.push(datos);
+          }
+        });
+
+        if (this.imagenes.length > 0) {
+          let datos_img = this.imagenes[this.imagenes.length - 1];
+          let imagen_uri = datos_img.id.split(';')[1];
+          this.logo_uri = imagen_uri;
+          resolve(true);
+        }
+        reject(false);
+      });
+    });
+  }
+
+  async convertImage(port: string, emulation: string) {
+    return await new Promise<boolean>((resolve, reject) => {
+      this.photoLibrary.requestAuthorization().then(async () => {
+        const resLogo = await this.getLogoLibrary();
+        if (resLogo) {
+          let imageObj = {
+            uri: 'file:///' + this.logo_uri,
+            width: 384,
+            cutReceipt: true,
+            openCashDrawer: false
+          }
+          this.starprnt.printImage(port, emulation, imageObj).then(async result => {
+            console.log('Entro a impresion logo', result);
+            resolve(true);
+          }).catch(async error => {
+            console.log('Error logo', error);
+            reject(false);
+          });
+        }
+      }).catch(err => {
+        return false;
+      });
+    });
+  }
+
+  async ticketQRPRNT(port: string, emulation: string, commands: CommandsArray) {
+    return await new Promise<boolean>((resolve, reject) => {
+      this.starprnt.print(port, emulation, commands).then(async result => {
+        console.log('Entro a impresion QR', result);
+        resolve(true);
+      }).catch(async error => {
+        console.log('Error QR', error);
+        reject(false);
+      });
+    });
+  }
+
+  async ticketEjemploPRNT(port: string, emulation: string, commands: CommandsArray) {
+    return await new Promise<boolean>((resolve, reject) => {
+        this.starprnt.print(port, emulation, commands).then(async result => {
+            console.log('Entro a impresion ticket', result);
+            resolve(true);
+        }).catch(async error => {
+            console.log('Error ticket', error);
+            reject(false);
+        });
+    });
+}
 }

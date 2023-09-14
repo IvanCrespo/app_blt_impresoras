@@ -12,6 +12,8 @@ import { ComponentsModule } from './components/components.module';
 // Plugins
 import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { StarPRNT } from '@awesome-cordova-plugins/star-prnt/ngx';
+import { PhotoLibrary } from '@awesome-cordova-plugins/photo-library/ngx'
 
 // Permissions
 import { Permissions } from './shared/permissions/permissions';
@@ -32,7 +34,9 @@ import { Permissions } from './shared/permissions/permissions';
     },
     BluetoothSerial,
     AndroidPermissions,
-    Permissions
+    Permissions,
+    StarPRNT,
+    PhotoLibrary
   ],
   bootstrap: [AppComponent],
 })

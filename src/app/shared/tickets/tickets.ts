@@ -3,12 +3,20 @@ import { Injectable } from '@angular/core';
 // Para encodear img
 import EscPosEncoder from 'esc-pos-encoder-ionic';
 
+// Plugins
+import { CommandsArray, StarPRNT } from '@awesome-cordova-plugins/star-prnt/ngx';
+
 @Injectable({
     providedIn: 'root'
 })
 export class Tickets {
 
-    constructor() { }
+    /* Impresora starPRNT */
+    commands!: CommandsArray
+
+    constructor(
+        private starprnt: StarPRNT,
+    ) { }
 
     async ticketLogo() {
         const image = await new Promise((resolve) => {
@@ -86,30 +94,53 @@ export class Tickets {
         return printData + result;
     }
 
-    async convertImage() {
-        let dataUrl = '../../assets/logo.png';
-        const res = await fetch(dataUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                return blob;
-            }).catch(error => {
-                console.log('Error en Fetch', error)
-                return;
-            })
-
-        return new Promise((resolve, reject) => {
-            if (res) {
-                const reader = new FileReader();
-                reader.readAsDataURL(res);
-                reader.onloadend = () => {
-                    let base64data = reader.result;
-                    console.log(base64data);
-                    resolve(base64data);
-                }
-                reader.onerror = () => {
-                    reject(null);
-                }
-            }
+    qrPRNT(): CommandsArray {
+        let twoInchReceipt: CommandsArray = [];
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Center });
+        twoInchReceipt.push({
+            appendQrCode: 'Hola prueba starPRNT',
+            QrCodeModel: "No2",
+            QrCodeLevel: "L",
+            cell: 8,
+            alignment: "Center",
+            absolutePosition: 120
         });
+        twoInchReceipt.push({ appendLineFeed: 1 });
+        return twoInchReceipt;
+    }
+
+    ticketPRNT(): CommandsArray {
+        let twoInchReceipt: CommandsArray = [];
+        twoInchReceipt.push({ appendInternational: this.starprnt.InternationalType.LatinAmerica });
+        twoInchReceipt.push({ appendEncoding: this.starprnt.Encoding.UTF8 })
+        twoInchReceipt.push({ appendCharacterSpace: 0 });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Right });
+        twoInchReceipt.push({ appendMultiple: "ORIGINAL" + "\n", width: 1, height: 2 });
+        twoInchReceipt.push({ appendEmphasis: "Folio: " + 'ABCD12345' + "\n" });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Left });
+        twoInchReceipt.push({ append: "Fecha/Hora: " });
+        twoInchReceipt.push({ appendEmphasis: "14 de Septiembre del 2023, 11:15:00 a.m" + "\n\n" });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Center });
+        twoInchReceipt.push({ appendMultiple: "VENTA Y ACTIVACION DE\nTARJETA DE PREPAGO\n\n", width: 1, height: 2 });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Left });
+        twoInchReceipt.push({ append: "--------------------------------\n" });
+        twoInchReceipt.push({ appendHorizontalTabPosition: [6, 16, 25, 34] });
+        twoInchReceipt.push({ appendEmphasis: "Cant.   Art.   Precio   Total\n" });
+        twoInchReceipt.push({ append: "--------------------------------\n" });
+        twoInchReceipt.push({
+            append:
+                "1" + "     " +
+                "TP" + "0070" + "   $" +
+                "200.00" + "   $" +
+                "200.00" + "\n\n"
+        });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Right });
+        twoInchReceipt.push({ appendEmphasis: "TOTAL M.N.  " + "$" + "200.00" + "\n\n" });
+        twoInchReceipt.push({ appendAlignment: this.starprnt.AlignmentPosition.Center });
+        twoInchReceipt.push({ append: "Supervisor: \n" });
+        twoInchReceipt.push({ appendEmphasis: "Ivan Crespo Reyes" + "\n\n" });
+        twoInchReceipt.push({ appendEmphasis: "*CONSERVE ESTE TICKET*\n" });
+        twoInchReceipt.push({ appendEmphasis: "ESTE TICKET NO ES UN COMPROBANTE FISCAL\n" });
+        return twoInchReceipt;
     }
 }

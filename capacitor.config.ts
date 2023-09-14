@@ -5,22 +5,23 @@ const config: CapacitorConfig = {
   appName: 'Prueba Impresora',
   webDir: 'www',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'http',
+    cleartext: true
+  },
+  android: {
+    allowMixedContent: true
   },
   plugins: {
-    "SplashScreen": {
-      "launchShowDuration": 3000,
-      /* "launchAutoHide": true, */
-      /* "backgroundColor": "#ffffffff", */
-      "androidSplashResourceName": "splash",
-      /* "androidScaleType": "CENTER_CROP", */
-      "showSpinner": true,
-      "androidSpinnerStyle": "large",
-      "iosSpinnerStyle": "small",
-      "spinnerColor": "#999999",
-      "splashFullScreen": true,
-      "splashImmersive": true,
-    }
+    SplashScreen: {
+      launchShowDuration: 3000,
+      androidSplashResourceName: "splash",
+      showSpinner: true,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#999999",
+      splashFullScreen: true,
+      splashImmersive: true,
+    },
   },
 };
 

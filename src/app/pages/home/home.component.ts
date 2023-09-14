@@ -45,19 +45,20 @@ export class HomeComponent implements OnInit {
   }
 
   searchDevices() {
-    this.bltService.searchDevices().then((devices: Array<Object>) => {
-      console.log('Devices encontrados Home', devices);
+    this.bltService.searchDevices().then(async (devices: Array<Object>) => {
       devices.forEach(async (deviceList: any, index) => {
+        console.log('Lista total de devicee', deviceList, index);
         if (index == 0 && deviceList.status == 'fulfilled') {
-          const res: any = await orderDevices(deviceList.value);
-          this.lists = res;
-          /* this.lists = [...deviceList.value]; */
+          this.lists = deviceList.value;
         }
-        if (index == 1 && deviceList.status == 'fulfilled') {
-          const res: any = await orderDevices(deviceList.value);
-          this.unpaireds = res;
+        else if (index == 1 && deviceList.status == 'fulfilled') {
+          this.unpaireds = deviceList.value;
         }
       });
+      this.lists = await orderDevices(this.lists);
+      console.log(this.lists);
+      this.unpaireds = await orderDevices(this.unpaireds);
+      console.log(this.unpaireds);
       if (this.lists.length > 0 || this.unpaireds.length > 0) {
         this.loaded = true;
         this.error = false;
@@ -144,7 +145,6 @@ export class HomeComponent implements OnInit {
 
   checkConnection() {
     this.bltService.checkConnectedDevice().then(async (isConnected) => {
-      console.log('Conectado entro?: ', isConnected);
       if (isConnected == "OK") {
         let device = JSON.parse(localStorage.getItem('device') || '');
         this.device = device.name;
